@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "gantt-task-react/dist/index.css";
 import { ViewMode, Task } from "gantt-task-react";
 import TextField from "@mui/material/TextField";
@@ -24,21 +24,31 @@ const ViewSwitcher: React.FC<ViewSwitcherProps> = ({
                                                      tasks,
                                                      setTasks,
                                                    }) => {
-    // Options for switching between different views (Day, Week, Month).
-    const viewsOptions = [
-    {
-      value: "Day",
-      onChange: ViewMode.Day,
-    },
-    {
-      value: "Week",
-      onChange: ViewMode.Week,
-    },
-    {
-      value: "Month",
-      onChange: ViewMode.Month,
-    },
+  // Options for switching between different views (Day, Week, Month).
+  const viewsOptions = [
+    { value: "Day", onChange: ViewMode.Day },
+    { value: "Week", onChange: ViewMode.Week },
+    { value: "Month", onChange: ViewMode.Month },
   ];
+
+  //TO DO COMMENTS
+  const [isWideScreen, setIsWideScreen] = useState(window.innerWidth > 1150);
+useEffect(() => {
+  function handleResize() {
+      const currentWidth = window.innerWidth;
+      const isWide = currentWidth > 1150;
+
+      // Adjust isChecked only when screen width crosses the 1150px threshold
+      if (isWide !== isWideScreen) {
+          setIsChecked(isWide);
+          setIsWideScreen(isWide);
+      }
+  }
+
+  window.addEventListener('resize', handleResize);
+  return () => window.removeEventListener('resize', handleResize);
+}, [isWideScreen, setIsChecked]);
+
 
   // Handle changes to the view mode dropdown selection.
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -78,11 +88,21 @@ const ViewSwitcher: React.FC<ViewSwitcherProps> = ({
             <TextField
                 id="outlined-select-view"
                 select
-                sx={{ minWidth: 150, margin: 5 }}
+                sx={{ minWidth: 150, margin: isWideScreen ? '50px' : '0px' }}
                 label="View options"
                 size="small"
-                value={view} 
+                value={view}
                 onChange={handleChange}
+                SelectProps={{
+                    MenuProps: {
+                        PaperProps: {
+                            style: {
+                                //transform: isWideScreen ? 'none' : 'scale(0.6)',
+                                transformOrigin: 'center',
+                            },
+                        },
+                    },
+                }}
             >
               {viewsOptions.map((option) => (
                   <MenuItem key={option.value} value={option.value}>
