@@ -33,7 +33,8 @@ const GanttChart: React.FC<GanttChartProps> = ({
   const [listCellWidth, setListCellWidth] = useState<string>("");
   // Column width based on screen size
   const [colswidth, setColsWidth] = useState(() => window.innerWidth <= 1150 ? 100 : 165);
-  // State to control the visibility of the edit menu
+  //TODO COMMENTS
+  const [fontSize, setFontSize] = useState(() => window.innerWidth <= 1150 ? "0.6rem" : "0.8rem");  // State to control the visibility of the edit menu
   const [editMenuOpen, setEditMenuOpen] = useState<boolean>(false);
 
   // Fetch initial tasks when the component mounts
@@ -94,19 +95,18 @@ const GanttChart: React.FC<GanttChartProps> = ({
     }
   };
 
-  // Handle window resizing to adjust list cell width and column width
-  useEffect(() => {
-    const handleResize = () => {
-      if (isChecked) {
-        setColsWidth(window.innerWidth <= 1150 ? 100 : 165);
-        setListCellWidth(window.innerWidth <= 1150 ? "125px" : "160px");
-      }
-    };
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [isChecked]);
+// Handle window resizing to adjust list cell width and column width
+useEffect(() => {
+  const handleResize = () => {
+      setColsWidth(window.innerWidth <= 1150 ? 100 : 165);
+      setListCellWidth(window.innerWidth <= 1150 ? "125px" : "160px");
+      setFontSize(window.innerWidth <= 1150 ? "0.6rem" : "1rem");
+  };
+  window.addEventListener('resize', handleResize);
+  return () => {
+      window.removeEventListener('resize', handleResize);
+  };
+}, []);
 
   // Open the edit menu for the selected task
   const openEditMenu = (task: Task) => {
@@ -162,12 +162,8 @@ const GanttChart: React.FC<GanttChartProps> = ({
           arrowColor="#64CCC5"
           barFill={55}
           fontFamily="Montserrat, self-serif"
-          listCellWidth={
-            isChecked ? (window.innerWidth <= 1150 ? "100px" : "160px") : ""
-          }
-          fontSize={
-            isChecked ? (window.innerWidth <= 1150 ? "0.6rem" : "0.7rem") : "0.7rem"
-          }
+          listCellWidth={isChecked ? listCellWidth : ""}
+          fontSize={fontSize}
           columnWidth={colswidth}
           rowHeight={40}
         />
